@@ -62,14 +62,15 @@ class ScoreView():
 
     def draw_bar(self, x, y):
         """Summary line.
-        左上の座標(x,y)を視点に小節を描画します
+        左上の座標(x,y)を視点に、上方向（y軸負の方向）に小節を描画します
 
         Args:
             x: 左上のx座標
             y: 左上のy座標
         """
         c_x = x
-        c_y = y
+        c_y = y+self.TEXTURE_SIZE['white_tex'][1]
+        dpg.draw_line((c_x+self.BAR_WIDTH, c_y), (c_x+self.BAR_WIDTH, c_y-self.BAR_HEIGHT))
         # 縦棒を描画（スクラッチレーン）
         for c in range(self.SCRATCH_LANE_NUM):
             dpg.draw_line((c_x+self.SCRATCH_LANE_WIDTH*c, c_y), (c_x+self.SCRATCH_LANE_WIDTH*c, c_y-self.BAR_HEIGHT))
@@ -80,7 +81,6 @@ class ScoreView():
         c_x = x
         c_y = y+self.TEXTURE_SIZE['white_tex'][1]
         # 16分線を描画
-        print(int(self.BAR_HEIGHT/self.NOTES_NUM_PER_BAR))
         for r in range(0, 16):
             dpg.draw_line((c_x, c_y-self.BAR_1_16*r), (c_x+self.BAR_WIDTH, c_y-self.BAR_1_16*r), color=(128,128,128))
         c_x = x
@@ -88,53 +88,37 @@ class ScoreView():
         # 4分線を描画
         for r in range(0, 4):
             dpg.draw_line((c_x, c_y-self.BAR_1_4*r), (c_x+self.BAR_WIDTH, c_y-self.BAR_1_4*r), color=(256,256,256))
+        dpg.draw_line((c_x, c_y-self.BAR_HEIGHT), (c_x+self.BAR_WIDTH, c_y-self.BAR_HEIGHT), color=(256,256,256))
 
     def create_window(self):
         with dpg.font_registry():
             with dpg.font(FONTFILE, 20, default_font=True):
                 dpg.add_font_range_hint(dpg.mvFontRangeHint_Japanese)
-        with dpg.window(label="Auto Clicker", width=1280, height=720) as window:
+        with dpg.window(label="Auto Clicker", width=1280, height=900) as window:
             # dpg.add_text('操作方法：\n座標追加：Space\n追加された最後の座標を削除：Delete\n追加された座標をクリック：c\nアプリ終了：Ctrl+Z')
-            # 小節を描画
-            x=0
-            y=0+self.BAR_HEIGHT
-            self.draw_bar(x, y)
-            # ノーツの画像を配置
-            self.draw_tex("scratch_tex", x, y)
-            x += self.SCRATCH_LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-
-            x=0
-            y=0
-            self.draw_bar(x, y)
-            self.draw_tex("scratch_tex", x, y)
-            x += self.SCRATCH_LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("black_tex", x, y)
-            x += self.LANE_WIDTH
-            self.draw_tex("white_tex", x, y)
-        viewport = dpg.create_viewport(title='Custom Title', width=1280, height=720)
+            # 縦に3つの小節を描画
+            for n in range(3, 0, -1):
+                # 小節を描画
+                x=0
+                y=0+self.BAR_HEIGHT*n
+                self.draw_bar(x, y)
+                # ノーツの画像を配置
+                self.draw_tex("scratch_tex", x, y)
+                x += self.SCRATCH_LANE_WIDTH
+                self.draw_tex("white_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("black_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("white_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("black_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("white_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("black_tex", x, y)
+                x += self.LANE_WIDTH
+                self.draw_tex("white_tex", x, y)
+        viewport = dpg.create_viewport(title='Custom Title', width=1280, height=900)
 
         # ボタンを作る
         # button = dpg.add_button(label="Don't forget me!", parent=window)
